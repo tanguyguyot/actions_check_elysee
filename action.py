@@ -5,7 +5,6 @@ from email.mime.text import MIMEText
 import time
 
 URL = "https://evenements.elysee.fr/jep"
-CHECK_INTERVAL = 1800  # 30 minutes
 
 EMAIL_USER = os.getenv("ELYSEE_EMAIL_USER")
 EMAIL_PASS = os.getenv("ELYSEE_EMAIL_PASS")
@@ -21,13 +20,9 @@ def send_email():
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
 
-while True:
-    try:
-        r = requests.get(URL)
-        if r.status_code != 404:
-            send_email()
-            break
-    except Exception as e:
-        print("Erreur:", e)
-
-    time.sleep(CHECK_INTERVAL)
+try:
+    r = requests.get(URL)
+    if r.status_code != 404:
+        send_email()
+except Exception as e:
+    print("Erreur:", e)
