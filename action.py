@@ -2,7 +2,6 @@ import os
 import requests
 import smtplib
 from email.mime.text import MIMEText
-import time
 
 URL = "https://evenements.elysee.fr/jep"
 
@@ -20,9 +19,16 @@ def send_email():
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
 
-try:
-    r = requests.get(URL)
-    if r.status_code != 404:
-        send_email()
-except Exception as e:
-    print("Erreur:", e)
+def main():
+    try:
+        r = requests.get(URL, timeout=10)
+        if r.status_code != 404:
+            send_email()
+            print("✅ La page est dispo, email envoyé.")
+        else:
+            print("❌ Toujours 404.")
+    except Exception as e:
+        print("⚠️ Erreur:", e)
+
+if __name__ == "__main__":
+    main()
